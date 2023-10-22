@@ -56,12 +56,23 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            if (await _taskService.IsTaskExists(id))
+            try
             {
                 await _taskService.UpdateTaskById(task);
-                return NoContent();
             }
-            return NotFound();
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _taskService.IsTaskExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // PUT: api/tasks/5
@@ -69,12 +80,23 @@ namespace WebApi.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTask(int id)
         {
-            if (await _taskService.IsTaskExists(id))
+            try
             {
                 await _taskService.CompleteTask(id);
-                return NoContent();
             }
-            return NotFound();
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _taskService.IsTaskExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // DELETE: api/tasks/5
@@ -85,8 +107,8 @@ namespace WebApi.Controllers
             {
                 await _taskService.RemoveTaskById(id);
                 return NoContent();
-                
             }
+
             return NotFound();
         }
     }
