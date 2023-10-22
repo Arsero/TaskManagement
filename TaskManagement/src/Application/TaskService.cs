@@ -14,13 +14,13 @@ namespace Application
 
         public async Task<IEnumerable<Domain.Task>> GetAllTasks()
         {
-            return await _context.Tasks.ToListAsync();
+            return await _context.Tasks.AsNoTracking().ToListAsync();
         }
 
-        public async Task<int> AddTask(Domain.Task task)
+        public async Task AddTask(Domain.Task task)
         {
             _context.Tasks.Add(task);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Domain.Task?> GetTaskById(int id)
@@ -28,7 +28,7 @@ namespace Application
             return await _context.Tasks.FindAsync(id);
         }
 
-        public async Task<int> CompleteTask(int id)
+        public async Task CompleteTask(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
             if (task != null)
@@ -37,23 +37,22 @@ namespace Application
                 {
                     task.IsCompleted = true;
                     _context.Update(task);
-                    return await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
             }
-            return 0;
         }
 
-        public async Task<int> UpdateTaskById(Domain.Task task)
+        public async Task UpdateTaskById(Domain.Task task)
         {
             _context.Update(task);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<int> RemoveTaskById(int id)
+        public async Task RemoveTaskById(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
             _context.Tasks.Remove(task);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> IsTaskExists(int id)
