@@ -17,10 +17,10 @@ namespace Application
             return await _context.Tasks.ToListAsync();
         }
 
-        public async void AddTask(Domain.Task task)
+        public async Task<int> AddTask(Domain.Task task)
         {
             _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<Domain.Task?> GetTaskById(int id)
@@ -28,7 +28,7 @@ namespace Application
             return await _context.Tasks.FindAsync(id);
         }
 
-        public async void CompleteTask(int id)
+        public async Task<int> CompleteTask(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
             if (task != null)
@@ -37,22 +37,23 @@ namespace Application
                 {
                     task.IsCompleted = true;
                     _context.Update(task);
-                    await _context.SaveChangesAsync();
+                    return await _context.SaveChangesAsync();
                 }
             }
+            return 0;
         }
 
-        public async void UpdateTaskById(Domain.Task task)
+        public async Task<int> UpdateTaskById(Domain.Task task)
         {
             _context.Update(task);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
-        public async void RemoveTaskById(int id)
+        public async Task<int> RemoveTaskById(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
             _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<bool> IsTaskExists(int id)

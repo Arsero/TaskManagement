@@ -10,8 +10,7 @@ namespace Infrastructure
         {
             services.AddDbContext<TaskDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(TaskDbContext).Assembly.FullName)),
-                ServiceLifetime.Transient);
+                b => b.MigrationsAssembly(typeof(TaskDbContext).Assembly.FullName)));
 
             return services;
         }
