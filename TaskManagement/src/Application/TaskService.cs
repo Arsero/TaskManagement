@@ -1,63 +1,57 @@
-﻿using Infrastructure;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application
+﻿namespace Application
 {
     public class TaskService : ITaskService
     {
-        private readonly TaskDbContext _context;
+        private readonly ITaskRepository _taskRepository;
 
-        public TaskService(TaskDbContext context)
+        public TaskService(ITaskRepository taskRepository)
         {
-            this._context = context;
+            this._taskRepository = taskRepository;
         }
 
         public async Task<IEnumerable<Domain.Task>> GetAllTasks()
         {
-            return await _context.Tasks.AsNoTracking().ToListAsync();
+            return await _taskRepository.GetAll();
         }
 
         public async Task AddTask(Domain.Task task)
         {
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
+            await _taskRepository.Add(task);
         }
 
         public async Task<Domain.Task?> GetTaskById(int id)
         {
-            return await _context.Tasks.FindAsync(id);
+            return await _taskRepository.GetById(id);
         }
 
         public async Task CompleteTask(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _taskRepository.GetById(id);
             if (task != null)
             {
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Thursday)
                 {
                     task.IsCompleted = true;
-                    _context.Update(task);
-                    await _context.SaveChangesAsync();
+                    await _taskRepository.Update(task);
                 }
             }
         }
 
-        public async Task UpdateTaskById(Domain.Task task)
+        public async Task UpdateTaskById(int id, Domain.Task task)
         {
-            _context.Update(task);
-            await _context.SaveChangesAsync();
+            if (task != null)
+            {
+                await _taskRepository.Update(task);
+            }
         }
 
         public async Task RemoveTaskById(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<bool> IsTaskExists(int id)
-        {
-            return (await _context.Tasks.FindAsync(id)) is not null;
+            var task = await _taskRepository.GetById(id);
+            if (task != null)
+            {
+                await _taskRepository.Remove(task);
+            }
         }
     }
 }

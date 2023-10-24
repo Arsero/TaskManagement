@@ -58,18 +58,11 @@ namespace WebApi.Controllers
 
             try
             {
-                await _taskService.UpdateTaskById(task);
+                await _taskService.UpdateTaskById(id, task);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _taskService.IsTaskExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -86,14 +79,7 @@ namespace WebApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _taskService.IsTaskExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -103,13 +89,8 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            if (await _taskService.IsTaskExists(id))
-            {
-                await _taskService.RemoveTaskById(id);
-                return NoContent();
-            }
-
-            return NotFound();
+            await _taskService.RemoveTaskById(id);
+            return NoContent();
         }
     }
 }
