@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class TaskRepository : GenericRepository<Domain.Task>, ITaskRepository
+    public class TaskRepository : GenericRepository<Domain.Entities.Task>, ITaskRepository
     {
         private readonly TaskDbContext _dbContext;
 

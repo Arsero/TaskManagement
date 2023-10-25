@@ -1,6 +1,6 @@
 ﻿namespace Application
 {
-    public interface ITaskRepository : IGenericRepository<Domain.Task>
+    public interface ITaskRepository : IGenericRepository<Domain.Entities.Task>
     {
         Task<bool> TaskExist(int id);
     }

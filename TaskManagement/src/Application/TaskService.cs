@@ -1,4 +1,6 @@
-﻿namespace Application
+﻿using Domain.Exceptions;
+
+namespace Application
 {
     public class TaskService : ITaskService
     {
@@ -9,17 +11,17 @@
             this._taskRepository = taskRepository;
         }
 
-        public async Task<IEnumerable<Domain.Task>> GetAllTasks()
+        public async Task<IEnumerable<Domain.Entities.Task>> GetAllTasks()
         {
             return await _taskRepository.GetAll();
         }
 
-        public async Task AddTask(Domain.Task task)
+        public async Task AddTask(Domain.Entities.Task task)
         {
             await _taskRepository.Add(task);
         }
 
-        public async Task<Domain.Task?> GetTaskById(int id)
+        public async Task<Domain.Entities.Task?> GetTaskById(int id)
         {
             return await _taskRepository.GetById(id);
         }
@@ -37,7 +39,7 @@
             }
         }
 
-        public async Task UpdateTaskById(int id, Domain.Task task)
+        public async Task UpdateTaskById(int id, Domain.Entities.Task task)
         {
             if (task != null)
             {
@@ -47,11 +49,10 @@
 
         public async Task RemoveTaskById(int id)
         {
-            var task = await _taskRepository.GetById(id);
-            if (task != null)
-            {
-                await _taskRepository.Remove(task);
-            }
+            var task = await _taskRepository.GetById(id) 
+                ?? throw new Exception("Task not found.");
+
+            await _taskRepository.Remove(task);
         }
     }
 }

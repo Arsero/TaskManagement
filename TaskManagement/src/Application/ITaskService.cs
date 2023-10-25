@@ -2,11 +2,11 @@
 {
     public interface ITaskService
     {
-        Task<IEnumerable<Domain.Task>> GetAllTasks();
-        Task AddTask(Domain.Task task);
-        Task<Domain.Task?> GetTaskById(int id);
+        Task<IEnumerable<Domain.Entities.Task>> GetAllTasks();
+        Task AddTask(Domain.Entities.Task task);
+        Task<Domain.Entities.Task?> GetTaskById(int id);
         Task CompleteTask(int id);
-        Task UpdateTaskById(int id, Domain.Task task);
+        Task UpdateTaskById(int id, Domain.Entities.Task task);
         Task RemoveTaskById(int id);
     }
 }
