@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Application;
+using Domain.Exceptions;
 
 namespace WebApi.Controllers
 {
@@ -26,13 +27,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Domain.Entities.Task>> GetTask(int id)
         {
-            var task = await _taskService.GetTaskById(id);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(task);
+            return Ok(await _taskService.GetTaskById(id));
         }
 
         // POST: api/tasks
@@ -51,20 +46,7 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id, Domain.Entities.Task task)
         {
-            if (id != task.Id)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                await _taskService.UpdateTaskById(id, task);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return NotFound();
-            }
-
+            await _taskService.UpdateTaskById(id, task);
             return NoContent();
         }
 
@@ -73,15 +55,7 @@ namespace WebApi.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTask(int id)
         {
-            try
-            {
-                await _taskService.CompleteTask(id);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return NotFound();
-            }
-
+            await _taskService.CompleteTask(id);
             return NoContent();
         }
 

@@ -8,7 +8,7 @@ namespace WebApi.Controllers
     [ApiController]
     public class ErrorsController : ControllerBase
     {
-        [HttpGet]
+        [AcceptVerbs("GET", "POST", "PUT", "DELETE", "PATCH")]
         public IActionResult Error()
         {
             var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;

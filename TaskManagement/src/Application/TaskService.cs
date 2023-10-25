@@ -23,34 +23,41 @@ namespace Application
 
         public async Task<Domain.Entities.Task?> GetTaskById(int id)
         {
-            return await _taskRepository.GetById(id);
+            var task = await _taskRepository.GetById(id)
+                ?? throw new NotFoundException("Task not found.");
+
+            return task;
         }
 
         public async Task CompleteTask(int id)
         {
-            var task = await _taskRepository.GetById(id);
-            if (task != null)
-            {
-                if (DateTime.Now.DayOfWeek == DayOfWeek.Thursday)
-                {
-                    task.IsCompleted = true;
-                    await _taskRepository.Update(task);
-                }
-            }
+            var task = await _taskRepository.GetById(id)
+                ?? throw new NotFoundException("Task not found.");
+
+            task.Complete();
+            await _taskRepository.Update(task);
         }
 
         public async Task UpdateTaskById(int id, Domain.Entities.Task task)
         {
-            if (task != null)
+            if (id != task.Id)
             {
-                await _taskRepository.Update(task);
+                throw new ValidationException("Not the same IDs");
             }
+
+            var taskExist = await _taskRepository.TaskExist(id);
+            if(!taskExist)
+            {
+                throw new NotFoundException("Task not found.");
+            }
+
+            await _taskRepository.Update(task);
         }
 
         public async Task RemoveTaskById(int id)
         {
             var task = await _taskRepository.GetById(id) 
-                ?? throw new Exception("Task not found.");
+                ?? throw new NotFoundException("Task not found.");
 
             await _taskRepository.Remove(task);
         }
