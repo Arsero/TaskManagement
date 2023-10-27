@@ -1,8 +1,8 @@
-﻿using Application;
+﻿using Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Infrastructure
+namespace Infrastructure.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -10,7 +10,7 @@ namespace Infrastructure
 
         public GenericRepository(TaskDbContext dbContext)
         {
-            this._dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task Add(T entity)

@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using Application.Common.Interfaces;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

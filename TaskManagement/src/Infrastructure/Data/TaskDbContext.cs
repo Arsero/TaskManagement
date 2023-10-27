@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure
+namespace Infrastructure.Data
 {
     public class TaskDbContext : DbContext
     {
@@ -9,7 +9,7 @@ namespace Infrastructure
         public DbSet<Comment> Comments { get; set; }
         public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
         {
-            this.Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

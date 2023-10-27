@@ -1,4 +1,4 @@
-﻿namespace Application
+﻿namespace Application.Common.Interfaces
 {
     public interface ITaskRepository : IGenericRepository<Domain.Entities.Task>
     {

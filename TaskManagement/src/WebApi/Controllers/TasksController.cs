@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Application;
 using Domain.Exceptions;
+using MediatR;
+using Application.Tasks.Queries.GetTasks;
+using Application.Tasks.Queries.GetTaskById;
+using Application.Tasks.Commands.CreateTask;
+using Application.Tasks.Commands.UpdateTask;
+using Application.Tasks.Commands.CompleteTask;
+using Application.Tasks.Commands.DeleteTask;
 
 namespace WebApi.Controllers
 {
@@ -9,34 +14,33 @@ namespace WebApi.Controllers
     [ApiController]
     public class TasksController : ControllerBase
     {
-        private readonly ITaskService _taskService;
+        private readonly IMediator _mediator;
 
-        public TasksController(ITaskService taskService)
+        public TasksController(IMediator mediator)
         {
-            _taskService = taskService;
+            _mediator = mediator;
         }
 
         // GET: api/tasks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Domain.Entities.Task>>> GetTask()
         {
-            return Ok(await _taskService.GetAllTasks());
+            return Ok(await _mediator.Send(new GetTasksQuery()));
         }
 
         // GET: api/tasks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Domain.Entities.Task>> GetTask(int id)
         {
-            return Ok(await _taskService.GetTaskById(id));
+            return Ok(await _mediator.Send(new GetTaskByIdQuery(id)));
         }
 
         // POST: api/tasks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Domain.Entities.Task>> PostTask(Domain.Entities.Task task)
+        public async Task<ActionResult<Domain.Entities.Task>> PostTask(CreateTaskCommand command)
         {
-            task.Id = 0;
-            await _taskService.AddTask(task);
+            var task = await _mediator.Send(command);
 
             return CreatedAtAction("GetTask", new { id = task.Id }, task);
         }
@@ -44,9 +48,14 @@ namespace WebApi.Controllers
         // PUT: api/tasks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(int id, Domain.Entities.Task task)
+        public async Task<IActionResult> PutTask(int id, UpdateTaskCommand updateTaskCommand)
         {
-            await _taskService.UpdateTaskById(id, task);
+            if(id != updateTaskCommand.Id)
+            {
+                throw new ValidationException("Not the same IDs.");
+            }
+
+            await _mediator.Send(updateTaskCommand);
             return NoContent();
         }
 
@@ -55,7 +64,7 @@ namespace WebApi.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTask(int id)
         {
-            await _taskService.CompleteTask(id);
+            await _mediator.Send(new CompleteTaskCommand(id));
             return NoContent();
         }
 
@@ -63,7 +72,7 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            await _taskService.RemoveTaskById(id);
+            await _mediator.Send(new DeleteTaskCommand(id));
             return NoContent();
         }
     }

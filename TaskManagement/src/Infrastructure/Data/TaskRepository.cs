@@ -1,7 +1,7 @@
-﻿using Application;
+﻿using Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure
+namespace Infrastructure.Data
 {
     public class TaskRepository : GenericRepository<Domain.Entities.Task>, ITaskRepository
     {
@@ -9,7 +9,7 @@ namespace Infrastructure
 
         public TaskRepository(TaskDbContext dbContext) : base(dbContext)
         {
-            this._dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<bool> TaskExist(int id)

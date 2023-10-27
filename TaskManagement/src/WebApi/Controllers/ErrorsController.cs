@@ -6,6 +6,7 @@ namespace WebApi.Controllers
 {
     [Route("api/error")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorsController : ControllerBase
     {
         [AcceptVerbs("GET", "POST", "PUT", "DELETE", "PATCH")]

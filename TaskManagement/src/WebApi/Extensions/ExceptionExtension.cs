@@ -9,6 +9,7 @@ namespace WebApi.Extensions
             var statusCode = exception switch
             {
                 ValidationException => StatusCodes.Status400BadRequest,
+                Application.Common.Exceptions.ValidationException => StatusCodes.Status400BadRequest,
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
