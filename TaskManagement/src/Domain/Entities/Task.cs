@@ -1,4 +1,5 @@
 ﻿using Domain.Exceptions;
+using Domain.Interfaces;
 
 namespace Domain.Entities
 {
@@ -10,9 +11,9 @@ namespace Domain.Entities
         public DateTime DueDate { get; set; }
         public bool IsCompleted { get; set; }
 
-        public void Complete()
+        public void Complete(IDateProvider dateProvider)
         {
-            IsCompleted = DateTime.Now.DayOfWeek == DayOfWeek.Thursday 
+            IsCompleted = dateProvider.Now.DayOfWeek == DayOfWeek.Thursday 
                 ? true
                 : throw new ValidationException("Task can only be complete on Thursday.");
         }

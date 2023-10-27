@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Services;
 using Domain.Exceptions;
 using MediatR;
 
@@ -20,7 +21,7 @@ namespace Application.Tasks.Commands.CompleteTask
             var task = await _taskRepository.GetById(request.Id)
                 ?? throw new NotFoundException("Task not found.");
 
-            task.Complete();
+            task.Complete(new SystemDateProvider());
             await _taskRepository.Update(task);
         }
     }
