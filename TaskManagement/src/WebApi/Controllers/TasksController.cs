@@ -7,6 +7,7 @@ using Application.Tasks.Commands.CreateTask;
 using Application.Tasks.Commands.UpdateTask;
 using Application.Tasks.Commands.CompleteTask;
 using Application.Tasks.Commands.DeleteTask;
+using Application.Tasks.Queries.GetTasksWithPaginationAndFilter;
 
 namespace WebApi.Controllers
 {
@@ -23,9 +24,9 @@ namespace WebApi.Controllers
 
         // GET: api/tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Domain.Entities.Task>>> GetTask()
+        public async Task<ActionResult<IEnumerable<Domain.Entities.Task>>> GetTask([FromQuery] GetTasksWithPaginationFilterAndSortingQuery query)
         {
-            return Ok(await _mediator.Send(new GetTasksQuery()));
+            return Ok(await _mediator.Send(query));
         }
 
         // GET: api/tasks/5

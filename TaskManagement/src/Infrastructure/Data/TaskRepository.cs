@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -14,7 +15,18 @@ namespace Infrastructure.Data
 
         public async Task<bool> TaskExist(int id)
         {
-            return await _dbContext.Tasks.AsNoTracking().AnyAsync(task => task.Id == id);
+            return await _dbContext.Tasks
+                .AsNoTracking()
+                .AnyAsync(task => task.Id == id);
+        }
+
+        public async Task<IEnumerable<Domain.Entities.Task>> GetWithFilteringAndSorting(bool? filterComplete = null, bool? orderByDate = null)
+        {
+            return await _dbContext.Tasks
+                .AsNoTracking()
+                .WhereIf(filterComplete != null, t => t.IsCompleted == filterComplete)
+                .OrderByIf(orderByDate != null, t => t.DueDate)
+                .ToListAsync();
         }
     }
 }
