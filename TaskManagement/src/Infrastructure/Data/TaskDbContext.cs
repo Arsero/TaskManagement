@@ -9,7 +9,6 @@ namespace Infrastructure.Data
         public DbSet<Comment> Comments { get; set; }
         public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
