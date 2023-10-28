@@ -22,7 +22,7 @@ namespace Application.Common.Behaviours
             {
                 var requestName = typeof(TRequest).Name;
 
-                _logger.LogError(ex, "Error : Unhandled Exception for Request {@Name} with message {@Exception}", 
+                _logger.LogError(ex, "Error : Request {@Name} with message {@Exception}", 
                     requestName, 
                     ex.Message);
 
