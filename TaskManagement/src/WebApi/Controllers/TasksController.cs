@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain.Exceptions;
 using MediatR;
-using Application.Tasks.Queries.GetTasks;
 using Application.Tasks.Queries.GetTaskById;
 using Application.Tasks.Commands.CreateTask;
 using Application.Tasks.Commands.UpdateTask;
