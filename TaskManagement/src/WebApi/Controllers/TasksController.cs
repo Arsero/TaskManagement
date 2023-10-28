@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Tasks.Commands.CompleteTask;
+using Application.Tasks.Commands.CreateTask;
+using Application.Tasks.Commands.DeleteTask;
+using Application.Tasks.Commands.UpdateTask;
+using Application.Tasks.Queries.GetTaskById;
+using Application.Tasks.Queries.GetTasksWithPaginationAndFilter;
 using Domain.Exceptions;
 using MediatR;
-using Application.Tasks.Queries.GetTaskById;
-using Application.Tasks.Commands.CreateTask;
-using Application.Tasks.Commands.UpdateTask;
-using Application.Tasks.Commands.CompleteTask;
-using Application.Tasks.Commands.DeleteTask;
-using Application.Tasks.Queries.GetTasksWithPaginationAndFilter;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
@@ -50,7 +50,7 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id, UpdateTaskCommand updateTaskCommand)
         {
-            if(id != updateTaskCommand.Id)
+            if (id != updateTaskCommand.Id)
             {
                 throw new ValidationException("Not the same IDs.");
             }
