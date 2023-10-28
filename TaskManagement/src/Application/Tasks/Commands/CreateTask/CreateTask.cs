@@ -7,8 +7,8 @@ namespace Application.Tasks.Commands.CreateTask
     {
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public DateTime DueDate { get; set; }
-        public bool IsCompleted { get; set; }
+        public DateTime? DueDate { get; set; }
+        public bool? IsCompleted { get; set; }
     }
 
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Domain.Entities.Task>
@@ -26,8 +26,8 @@ namespace Application.Tasks.Commands.CreateTask
             {
                 Title = request.Title,
                 Description = request.Description,
-                DueDate = request.DueDate,
-                IsCompleted = request.IsCompleted
+                DueDate = request.DueDate ?? DateTime.Now,
+                IsCompleted = request.IsCompleted ?? false
             };
 
             await _taskRepository.Add(task);

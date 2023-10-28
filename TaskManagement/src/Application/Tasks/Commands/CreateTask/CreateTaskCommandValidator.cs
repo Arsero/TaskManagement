@@ -10,6 +10,10 @@ namespace Application.Tasks.Commands.CreateTask
                 .NotEmpty();
             RuleFor(t => t.Description)
                 .NotEmpty();
+            RuleFor(t => t.DueDate)
+                .NotEmpty();
+            RuleFor(t => t.IsCompleted)
+                .NotEmpty();
         }
     }
 }
