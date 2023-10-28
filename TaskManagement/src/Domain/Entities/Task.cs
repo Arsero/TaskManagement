@@ -13,7 +13,7 @@ namespace Domain.Entities
 
         public void Complete(IDateProvider dateProvider)
         {
-            IsCompleted = dateProvider.Now.DayOfWeek == DayOfWeek.Thursday 
+            IsCompleted = dateProvider.Now.DayOfWeek == DayOfWeek.Thursday
                 ? true
                 : throw new ValidationException("Task can only be complete on Thursday.");
         }

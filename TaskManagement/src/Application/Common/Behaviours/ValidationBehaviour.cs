@@ -1,7 +1,6 @@
-﻿using ValidationException = Application.Common.Exceptions.ValidationException;
-
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
+using ValidationException = Application.Common.Exceptions.ValidationException;
 
 
 namespace Application.Common.Behaviours

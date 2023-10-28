@@ -4,7 +4,7 @@
     {
         public ValidationException(string message) : base(message)
         {
-            
+
         }
     }
 }

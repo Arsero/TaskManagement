@@ -6,7 +6,7 @@ namespace Application.Common.Exceptions
     {
         public ValidationException(IEnumerable<ValidationFailure> errors) : base(errors)
         {
-            
+
         }
     }
 }
