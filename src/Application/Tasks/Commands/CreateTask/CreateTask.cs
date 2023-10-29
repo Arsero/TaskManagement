@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Tasks.Commands.CreateTask
 {
-    public record CreateTaskCommand : IRequest
+    public record CreateTaskCommand : IRequest<Domain.Entities.Task>
     {
         public string? Title { get; set; }
         public string? Description { get; set; }
@@ -12,7 +12,7 @@ namespace Application.Tasks.Commands.CreateTask
         public bool? IsCompleted { get; set; }
     }
 
-    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand>
+    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Domain.Entities.Task>
     {
         private readonly ITaskRepository _taskRepository;
         private readonly ILogger<CreateTaskCommandHandler> _logger;
@@ -23,7 +23,7 @@ namespace Application.Tasks.Commands.CreateTask
             this._logger = logger;
         }
 
-        public async Task Handle(CreateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Entities.Task> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
             var task = new Domain.Entities.Task
             {
@@ -35,7 +35,8 @@ namespace Application.Tasks.Commands.CreateTask
 
             _logger.LogInformation("Task created : {@task}", task);
 
-            await _taskRepository.Add(task);;
+            await _taskRepository.Add(task);
+            return await Task.FromResult(task);
         }
     }
 }
