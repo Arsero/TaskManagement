@@ -13,9 +13,9 @@ namespace Domain.Entities
 
         public void Complete(IDateProvider dateProvider)
         {
-            IsCompleted = dateProvider.Now.DayOfWeek == DayOfWeek.Thursday
-                ? true
-                : throw new ValidationException("Task can only be complete on Thursday.");
+            IsCompleted = dateProvider.Now.DayOfWeek == DayOfWeek.Thursday;
+            if (!IsCompleted)
+                throw new ValidationException("Task can only be complete on Thursday.");
         }
     }
 }
