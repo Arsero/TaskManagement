@@ -1,8 +1,9 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Repository;
 using Application.Common.Services;
 using Application.Tasks.Events;
 using Domain.Exceptions;
 using MediatR;
+using IPublisher = Application.Common.Interfaces.Events.IPublisher;
 
 namespace Application.Tasks.Commands.CompleteTask
 {

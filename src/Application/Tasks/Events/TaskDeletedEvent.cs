@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using Application.Common.Interfaces.Events;
 
 namespace Application.Tasks.Events
 {
-    public class TaskDeletedEvent : INotification
+    public class TaskDeletedEvent : IEvent
     {
         public Domain.Entities.Task DeletedTask { get; set; }
 

@@ -1,10 +1,10 @@
-﻿using Application.Tasks.Events;
-using MediatR;
+﻿using Application.Common.Interfaces.Events;
+using Application.Tasks.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Tasks.EventHandlers
 {
-    public class TaskDeletedEventHandler : INotificationHandler<TaskDeletedEvent>
+    public class TaskDeletedEventHandler : IEventHandler<TaskDeletedEvent>
     {
         private readonly ILogger<TaskDeletedEventHandler> _logger;
 

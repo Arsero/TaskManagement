@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Repository;
 using MediatR;
 
 namespace Application.Tasks.Queries.GetTasks

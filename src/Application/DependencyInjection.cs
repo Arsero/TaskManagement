@@ -1,5 +1,4 @@
 ﻿using Application.Common.Behaviours;
-using Application.Common.Interfaces;
 using Application.Common.Services;
 using FluentValidation;
 using MediatR;
@@ -13,6 +12,7 @@ namespace Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddScoped<Common.Interfaces.Events.IPublisher, PublisherService>();
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

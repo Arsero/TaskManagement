@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using Application.Common.Interfaces.Events;
 
 namespace Application.Tasks.Events
 {
-    public class TaskUpdatedEvent : INotification
+    public class TaskUpdatedEvent : IEvent
     {
         public Domain.Entities.Task UpdatedTask { get; set; }
 
