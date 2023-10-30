@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Services;
+using Application.Tasks.Events;
 using Domain.Exceptions;
 using MediatR;
 
@@ -10,10 +11,12 @@ namespace Application.Tasks.Commands.CompleteTask
     public class CompleteTaskCommandHandler : IRequestHandler<CompleteTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
+        private readonly IPublisher _publisher;
 
-        public CompleteTaskCommandHandler(ITaskRepository taskRepository)
+        public CompleteTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
         {
             this._taskRepository = taskRepository;
+            this._publisher = publisher;
         }
 
         public async Task Handle(CompleteTaskCommand request, CancellationToken cancellationToken)
@@ -23,6 +26,7 @@ namespace Application.Tasks.Commands.CompleteTask
 
             task.Complete(new SystemDateProvider());
             await _taskRepository.Update(task);
+            await _publisher.Publish(new TaskCompletedEvent(task), cancellationToken);
         }
     }
 }

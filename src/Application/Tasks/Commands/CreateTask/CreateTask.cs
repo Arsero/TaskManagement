@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
+using Application.Tasks.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Tasks.Commands.CreateTask
 {
@@ -15,12 +15,12 @@ namespace Application.Tasks.Commands.CreateTask
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Domain.Entities.Task>
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly ILogger<CreateTaskCommandHandler> _logger;
+        private readonly IPublisher _publisher;
 
-        public CreateTaskCommandHandler(ITaskRepository taskRepository, ILogger<CreateTaskCommandHandler> logger)
+        public CreateTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
         {
             this._taskRepository = taskRepository;
-            this._logger = logger;
+            this._publisher = publisher;
         }
 
         public async Task<Domain.Entities.Task> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -33,9 +33,9 @@ namespace Application.Tasks.Commands.CreateTask
                 IsCompleted = request.IsCompleted ?? false
             };
 
-            _logger.LogInformation("Task created : {@task}", task);
-
             await _taskRepository.Add(task);
+            await _publisher.Publish(new TaskCreatedEvent(task), cancellationToken);
+
             return await Task.FromResult(task);
         }
     }

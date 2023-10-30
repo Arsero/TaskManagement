@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Tasks.Events;
 using Domain.Exceptions;
 using MediatR;
 
@@ -16,10 +17,12 @@ namespace Application.Tasks.Commands.UpdateTask
     public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
+        private readonly IPublisher _publisher;
 
-        public UpdateTaskCommandHandler(ITaskRepository taskRepository)
+        public UpdateTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
         {
             this._taskRepository = taskRepository;
+            this._publisher = publisher;
         }
 
         public async Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -33,6 +36,7 @@ namespace Application.Tasks.Commands.UpdateTask
             task.IsCompleted = request.IsCompleted ?? task.IsCompleted;
 
             await _taskRepository.Update(task);
+            await _publisher.Publish(new TaskDeletedEvent(task), cancellationToken);
         }
     }
 }
