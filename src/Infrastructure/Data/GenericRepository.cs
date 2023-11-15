@@ -44,5 +44,10 @@ namespace Infrastructure.Data
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+
+        public int Count()
+        {
+            return _dbContext.Set<T>().Count();
+        }
     }
 }

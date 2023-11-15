@@ -10,5 +10,6 @@ namespace Application.Common.Interfaces.Repository
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
         Task Update(T entity);
         Task Remove(T entity);
+        int Count();
     }
 }

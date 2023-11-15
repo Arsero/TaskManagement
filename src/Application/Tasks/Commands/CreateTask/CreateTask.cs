@@ -24,7 +24,7 @@ namespace Application.Tasks.Commands.CreateTask
             this._publisher = publisher;
         }
 
-        public async Task<Domain.Entities.Task> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Entities.Task> Handle(CreateTaskCommand request, CancellationToken cancellationToken = default)
         {
             var task = new Domain.Entities.Task
             {
