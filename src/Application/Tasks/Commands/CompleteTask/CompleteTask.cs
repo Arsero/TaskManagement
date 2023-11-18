@@ -1,9 +1,7 @@
-﻿using Application.Common.Interfaces.Repository;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repository;
 using Application.Common.Services;
-using Application.Tasks.Events;
-using Domain.Exceptions;
 using MediatR;
-using IPublisher = Application.Common.Interfaces.Events.IPublisher;
 
 namespace Application.Tasks.Commands.CompleteTask
 {
@@ -12,12 +10,10 @@ namespace Application.Tasks.Commands.CompleteTask
     public class CompleteTaskCommandHandler : IRequestHandler<CompleteTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IPublisher _publisher;
 
-        public CompleteTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
+        public CompleteTaskCommandHandler(ITaskRepository taskRepository)
         {
             this._taskRepository = taskRepository;
-            this._publisher = publisher;
         }
 
         public async Task Handle(CompleteTaskCommand request, CancellationToken cancellationToken)
@@ -25,9 +21,15 @@ namespace Application.Tasks.Commands.CompleteTask
             var task = await _taskRepository.GetById(request.Id)
                 ?? throw new NotFoundException("Task not found.");
 
+            if (task.IsCompleted)
+                throw new ValidationException("Task already completed.");
+
             task.Complete(new SystemDateProvider());
+
+            if (!task.IsCompleted)
+                throw new InvalidDateException("Task can only be complete on Thursday.");
+
             await _taskRepository.Update(task);
-            await _publisher.Publish(new TaskCompletedEvent(task), cancellationToken);
         }
     }
 }

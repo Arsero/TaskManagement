@@ -2,11 +2,11 @@
 
 namespace Infrastructure.Data
 {
-    public class TaskDbContextInitialiser
+    public class ApplicationDbContextInitialiser
     {
         private readonly ModelBuilder modelBuilder;
 
-        public TaskDbContextInitialiser(ModelBuilder modelBuilder)
+        public ApplicationDbContextInitialiser(ModelBuilder modelBuilder)
         {
             this.modelBuilder = modelBuilder;
         }

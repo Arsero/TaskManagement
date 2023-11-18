@@ -1,8 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using Domain.Common;
+using System.Linq.Expressions;
 
 namespace Application.Common.Interfaces.Repository
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<T> where T : BaseEntity
     {
         Task Add(T entity);
         Task<IEnumerable<T>> GetAll();

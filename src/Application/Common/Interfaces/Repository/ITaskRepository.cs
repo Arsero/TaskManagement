@@ -3,6 +3,6 @@
     public interface ITaskRepository : IGenericRepository<Domain.Entities.Task>
     {
         Task<bool> TaskExist(int id);
-        Task<IEnumerable<Domain.Entities.Task>> GetWithFilteringAndSorting(bool? filterComplete = null, bool? orderByDate = null);
+        Task<IEnumerable<Domain.Entities.Task>> GetWithFilteringAndSorting(bool? filterComplete = null, bool? orderByDate = null, int pageNumber = 1, int pageSize = 10);
     }
 }

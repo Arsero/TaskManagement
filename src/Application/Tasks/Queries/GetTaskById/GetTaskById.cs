@@ -1,5 +1,5 @@
-﻿using Application.Common.Interfaces.Repository;
-using Domain.Exceptions;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repository;
 using MediatR;
 
 namespace Application.Tasks.Queries.GetTaskById

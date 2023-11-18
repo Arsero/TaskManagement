@@ -3,8 +3,7 @@ using MediatR;
 
 namespace Application.Tasks.Queries.GetTasks
 {
-    public record GetTasksQuery : IRequest<IEnumerable<Domain.Entities.Task>>
-    { }
+    public record GetTasksQuery : IRequest<IEnumerable<Domain.Entities.Task>>;
 
     public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, IEnumerable<Domain.Entities.Task>>
     {

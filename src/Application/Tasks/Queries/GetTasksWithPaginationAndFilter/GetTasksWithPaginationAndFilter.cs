@@ -1,16 +1,14 @@
 ﻿using Application.Common.Interfaces.Repository;
-using Application.Common.Pagination;
 using MediatR;
 
 namespace Application.Tasks.Queries.GetTasksWithPaginationAndFilter
 {
-    public record GetTasksWithPaginationFilterAndSortingQuery : IRequest<IEnumerable<Domain.Entities.Task>>
-    {
-        public int PageNumber { get; init; } = 1;
-        public int PageSize { get; init; } = 10;
-        public bool? FilterComplete { get; init; }
-        public bool? OrderByDate { get; init; }
-    }
+    public record GetTasksWithPaginationFilterAndSortingQuery(
+        bool? FilterComplete, 
+        bool? OrderByDate,
+        int PageNumber = 1,
+        int PageSize = 10
+        ) : IRequest<IEnumerable<Domain.Entities.Task>>;
 
     public class GetTasksWithPaginationFilterAndSortingQueryHandler : IRequestHandler<GetTasksWithPaginationFilterAndSortingQuery, IEnumerable<Domain.Entities.Task>>
     {
@@ -23,9 +21,13 @@ namespace Application.Tasks.Queries.GetTasksWithPaginationAndFilter
 
         public async Task<IEnumerable<Domain.Entities.Task>> Handle(GetTasksWithPaginationFilterAndSortingQuery request, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.GetWithFilteringAndSorting(request.FilterComplete, request.OrderByDate);
+            var tasks = await _taskRepository.GetWithFilteringAndSorting(
+                request.FilterComplete,
+                request.OrderByDate,
+                request.PageNumber,
+                request.PageSize);
 
-            return tasks.ToPaginatedList(request.PageNumber, request.PageSize).Items;
+            return tasks;
         }
     }
 }

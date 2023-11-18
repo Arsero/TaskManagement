@@ -4,9 +4,9 @@ using Application.Tasks.Commands.DeleteTask;
 using Application.Tasks.Commands.UpdateTask;
 using Application.Tasks.Queries.GetTaskById;
 using Application.Tasks.Queries.GetTasksWithPaginationAndFilter;
-using Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Common.Exceptions;
 
 namespace WebApi.Controllers
 {
@@ -40,9 +40,9 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Domain.Entities.Task>> PostTask(CreateTaskCommand command)
         {
-            var task = await _mediator.Send(command);
+            await _mediator.Send(command);
 
-            return CreatedAtAction("GetTask", new { id = task.Id }, task);
+            return CreatedAtAction("GetTask", new { id = command.Id }, command);
         }
 
         // PUT: api/tasks/5
@@ -52,7 +52,7 @@ namespace WebApi.Controllers
         {
             if (id != updateTaskCommand.Id)
             {
-                throw new ValidationException("Not the same IDs.");
+                throw new BadRequestException("Not the same IDs.");
             }
 
             await _mediator.Send(updateTaskCommand);

@@ -1,8 +1,6 @@
-﻿using Application.Common.Interfaces.Repository;
-using Application.Tasks.Events;
-using Domain.Exceptions;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repository;
 using MediatR;
-using IPublisher = Application.Common.Interfaces.Events.IPublisher;
 
 namespace Application.Tasks.Commands.DeleteTask
 {
@@ -11,12 +9,10 @@ namespace Application.Tasks.Commands.DeleteTask
     public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IPublisher _publisher;
 
-        public DeleteTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
+        public DeleteTaskCommandHandler(ITaskRepository taskRepository)
         {
             this._taskRepository = taskRepository;
-            this._publisher = publisher;
         }
 
         public async Task Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
@@ -25,7 +21,6 @@ namespace Application.Tasks.Commands.DeleteTask
                 ?? throw new NotFoundException("Task not found.");
 
             await _taskRepository.Remove(task);
-            await _publisher.Publish(new TaskDeletedEvent(task), cancellationToken);
         }
     }
 }

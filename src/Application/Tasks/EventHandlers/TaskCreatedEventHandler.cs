@@ -1,10 +1,10 @@
-﻿using Application.Common.Interfaces.Events;
-using Application.Tasks.Events;
+﻿using Domain.Events;
+using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Tasks.EventHandlers
 {
-    public class TaskCreatedEventHandler : IEventHandler<TaskCreatedEvent>
+    public class TaskCreatedEventHandler : INotificationHandler<TaskCreatedEvent>
     {
         private readonly ILogger<TaskCreatedEventHandler> _logger;
 
@@ -15,7 +15,7 @@ namespace Application.Tasks.EventHandlers
 
         public Task Handle(TaskCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("{DomainEvent} : {@task}", notification.GetType().Name, notification.CreatedTask);
+            _logger.LogInformation("{DomainEvent} : {@task}", notification.GetType().Name, notification.Task);
 
             return Task.CompletedTask;
         }

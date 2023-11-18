@@ -12,9 +12,9 @@ namespace Infrastructure
         {
             services.AddScoped<ITaskRepository, TaskRepository>();
 
-            services.AddDbContext<TaskDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(TaskDbContext).Assembly.FullName)));
+                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
             return services;
         }

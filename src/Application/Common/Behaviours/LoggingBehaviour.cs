@@ -15,9 +15,9 @@ namespace Application.Common.Behaviours
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Request : {typeof(TRequest).Name}");
+            _logger.LogInformation("Request : {@Request}", typeof(TRequest).Name);
             var response = await next();
-            _logger.LogInformation($"Response : {JsonConvert.SerializeObject(response)}");
+            _logger.LogInformation("Response : {@Response}", JsonConvert.SerializeObject(response));
 
             return response;
         }

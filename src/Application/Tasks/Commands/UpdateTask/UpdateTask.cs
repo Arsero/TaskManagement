@@ -1,29 +1,18 @@
-﻿using Application.Common.Interfaces.Repository;
-using Application.Tasks.Events;
-using Domain.Exceptions;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repository;
 using MediatR;
-using IPublisher = Application.Common.Interfaces.Events.IPublisher;
 
 namespace Application.Tasks.Commands.UpdateTask
 {
-    public record UpdateTaskCommand : IRequest
-    {
-        public int Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public DateTime? DueDate { get; set; }
-        public bool? IsCompleted { get; set; }
-    }
+    public record UpdateTaskCommand(int Id, string? Title, string? Description, DateTime? DueDate, bool? IsCompleted) : IRequest;
 
     public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IPublisher _publisher;
 
-        public UpdateTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
+        public UpdateTaskCommandHandler(ITaskRepository taskRepository)
         {
             this._taskRepository = taskRepository;
-            this._publisher = publisher;
         }
 
         public async Task Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -37,7 +26,6 @@ namespace Application.Tasks.Commands.UpdateTask
             task.IsCompleted = request.IsCompleted ?? task.IsCompleted;
 
             await _taskRepository.Update(task);
-            await _publisher.Publish(new TaskDeletedEvent(task), cancellationToken);
         }
     }
 }

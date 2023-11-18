@@ -1,11 +1,10 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Common;
 using Domain.Interfaces;
 
 namespace Domain.Entities
 {
-    public class Task
+    public class Task : BaseEntity
     {
-        public int Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public DateTime DueDate { get; set; }
@@ -17,10 +16,6 @@ namespace Domain.Entities
             {
                 IsCompleted = true;
             }
-            else
-            {
-                throw new ValidationException("Task can only be complete on Thursday.");
-            } 
         }
     }
 }

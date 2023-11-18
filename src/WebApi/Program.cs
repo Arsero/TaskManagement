@@ -4,6 +4,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Logging
 builder.Logging
     .ClearProviders();
 
@@ -17,6 +18,7 @@ builder.Services
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services
     .AddEndpointsApiExplorer()

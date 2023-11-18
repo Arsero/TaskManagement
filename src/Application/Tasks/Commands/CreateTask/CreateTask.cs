@@ -1,30 +1,28 @@
 ﻿using Application.Common.Interfaces.Repository;
-using Application.Tasks.Events;
+using Domain.Events;
 using MediatR;
-using IPublisher = Application.Common.Interfaces.Events.IPublisher;
 
 namespace Application.Tasks.Commands.CreateTask
 {
-    public record CreateTaskCommand : IRequest<Domain.Entities.Task>
+    public record CreateTaskCommand : IRequest
     {
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public DateTime? DueDate { get; set; }
-        public bool? IsCompleted { get; set; }
+        public int Id { get; set; }
+        public string? Title { get; init; }
+        public string? Description { get; init; }
+        public DateTime? DueDate { get; init; }
+        public bool? IsCompleted { get; init; }
     }
 
-    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Domain.Entities.Task>
+    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand>
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IPublisher _publisher;
 
-        public CreateTaskCommandHandler(ITaskRepository taskRepository, IPublisher publisher)
+        public CreateTaskCommandHandler(ITaskRepository taskRepository)
         {
             this._taskRepository = taskRepository;
-            this._publisher = publisher;
         }
 
-        public async Task<Domain.Entities.Task> Handle(CreateTaskCommand request, CancellationToken cancellationToken = default)
+        public async Task Handle(CreateTaskCommand request, CancellationToken cancellationToken = default)
         {
             var task = new Domain.Entities.Task
             {
@@ -35,9 +33,9 @@ namespace Application.Tasks.Commands.CreateTask
             };
 
             await _taskRepository.Add(task);
-            await _publisher.Publish(new TaskCreatedEvent(task), cancellationToken);
+            task.AddDomainEvent(new TaskCreatedEvent(task));
 
-            return await Task.FromResult(task);
+            request.Id = task.Id;
         }
     }
 }

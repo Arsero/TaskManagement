@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class TaskDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             Database.EnsureCreated();
         }
@@ -20,7 +20,7 @@ namespace Infrastructure.Data
                 .HasForeignKey(c => c.TaskId)
                 .IsRequired();
 
-            new TaskDbContextInitialiser(modelBuilder).Seed();
+            new ApplicationDbContextInitialiser(modelBuilder).Seed();
         }
     }
 }
