@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Tasks.Commands.UpdateTask
 {
-    public record UpdateTaskCommand(int Id, string? Title, string? Description, DateTime? DueDate, bool? IsCompleted) : IRequest;
+    public record UpdateTaskCommand(int Id, string? Title = null, string? Description = null, DateTime? DueDate = null, bool? IsCompleted = null) : IRequest;
 
     public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand>
     {

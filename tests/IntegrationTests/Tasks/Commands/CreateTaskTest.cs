@@ -14,7 +14,7 @@ namespace IntegrationTests.Tasks.Commands
         }
 
         [Fact]
-        public async Task Create_TaskAsync()
+        public async Task CreateTask_ShouldReturn201()
         {
             // Arrange
             var command = new CreateTaskCommand
@@ -31,6 +31,26 @@ namespace IntegrationTests.Tasks.Commands
 
             // Assert
             ((int) response.StatusCode).Should().Be(StatusCodes.Status201Created);
+        }
+
+        [Fact]
+        public async Task CreateTask_ShouldReturn400_WhenBadParameters()
+        {
+            // Arrange
+            var command = new CreateTaskCommand
+            {
+                Id = 0,
+                Title = "Title",
+                Description = null,
+                DueDate = null,
+                IsCompleted = false,
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("api/tasks", command);
+
+            // Assert
+            ((int)response.StatusCode).Should().Be(StatusCodes.Status400BadRequest);
         }
     }
 }
