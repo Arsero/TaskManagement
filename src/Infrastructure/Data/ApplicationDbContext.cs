@@ -19,8 +19,6 @@ namespace Infrastructure.Data
                 .WithOne()
                 .HasForeignKey(c => c.TaskId)
                 .IsRequired();
-
-            new ApplicationDbContextInitialiser(modelBuilder).Seed();
         }
     }
 }

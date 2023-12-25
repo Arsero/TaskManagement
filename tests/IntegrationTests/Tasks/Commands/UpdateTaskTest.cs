@@ -1,59 +1,108 @@
 ﻿using Application.Tasks.Commands.UpdateTask;
+using AutoFixture;
 using FluentAssertions;
-using IntegrationTests.Database;
+using Infrastructure.Data;
+using IntegrationTests.Common;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using Xunit;
 
 namespace IntegrationTests.Tasks.Commands
 {
-    public class UpdateTaskTest : BaseTest
+    [Collection("Database collection")]
+    public class UpdateTaskTest
     {
-        public UpdateTaskTest(DatabaseFixture fixture) : base(fixture)
+        private readonly WebApplicationFactoryFixture _fixture;
+        private readonly Fixture _autoFixture;
+
+        public UpdateTaskTest(WebApplicationFactoryFixture fixture)
         {
+            _fixture = fixture;
+            _autoFixture = new Fixture();
         }
 
         [Fact]
         public async Task UpdateTask_ShouldReturn204()
         {
-            int id = 1;
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                // Arrange
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var task = _autoFixture.Create<Domain.Entities.Task>();
+                task.Id = 0;
+                context.Tasks.Add(task);
+                context.SaveChanges();
 
-            // Arrange
-            var command = new UpdateTaskCommand(id, "updated");
+                int count = context.Tasks.Count();
+                string updatedTitle = "Updated";
+                var command = new UpdateTaskCommand(task.Id, updatedTitle);
 
-            // Act
-            var response = await _client.PutAsJsonAsync("api/tasks/" + id,  command);
+                // Act
+                var response = await _fixture.Client.PutAsJsonAsync("api/tasks/" + task.Id, command);
+                context.Entry(task).State = EntityState.Detached;
 
-            // Assert
-            ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
+                // Assert
+                ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
+                context.Tasks.Count().Should().Be(count);
+
+                var updatedTask = context.Tasks.Find(command.Id);
+                updatedTask.Should().NotBeNull();
+                updatedTask?.Title.Should().Be(updatedTitle);
+            }
         }
 
         [Fact]
         public async Task UpdateTask_ShouldReturn404_WhenBadParameters()
         {
-            // Arrange
-            int id = 300;
-            var command = new UpdateTaskCommand(id, "updated");
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                // Arrange
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var task = _autoFixture.Create<Domain.Entities.Task>();
+                task.Id = 0;
+                context.Tasks.Add(task);
+                context.SaveChanges();
 
-            // Act
-            var response = await _client.PutAsJsonAsync("api/tasks/" + id, command);
+                int count = context.Tasks.Count();
+                int badId = task.Id + 100;
+                string updatedTitle = "Updated";
+                var command = new UpdateTaskCommand(task.Id, updatedTitle);
 
-            // Assert
-            ((int)response.StatusCode).Should().Be(StatusCodes.Status404NotFound);
+                // Act
+                var response = await _fixture.Client.PutAsJsonAsync("api/tasks/" + badId, command);
+                
+                // Assert
+                ((int)response.StatusCode).Should().Be(StatusCodes.Status400BadRequest);
+                context.Tasks.Count().Should().Be(count);
+            }
         }
 
         [Fact]
         public async Task UpdateTask_ShouldReturn400_WhenBadId()
         {
-            // Arrange
-            int id = 1, badId = 2;
-            var command = new UpdateTaskCommand(id, "updated");
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                // Arrange
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var task = _autoFixture.Create<Domain.Entities.Task>();
+                task.Id = 0;
+                context.Tasks.Add(task);
+                context.SaveChanges();
 
-            // Act
-            var response = await _client.PutAsJsonAsync("api/tasks/" + badId, command);
+                int count = context.Tasks.Count();
+                int badId = task.Id + 100;
+                string updatedTitle = "Updated";
+                var command = new UpdateTaskCommand(badId, updatedTitle);
 
-            // Assert
-            ((int)response.StatusCode).Should().Be(StatusCodes.Status400BadRequest);
+                // Act
+                var response = await _fixture.Client.PutAsJsonAsync("api/tasks/" + badId, command);
+
+                // Assert
+                ((int)response.StatusCode).Should().Be(StatusCodes.Status404NotFound);
+                context.Tasks.Count().Should().Be(count);
+            }
         }
     }
 }

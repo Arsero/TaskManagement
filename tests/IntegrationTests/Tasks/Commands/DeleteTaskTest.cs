@@ -1,44 +1,74 @@
-﻿using Application.Tasks.Commands.CreateTask;
-using Application.Tasks.Commands.DeleteTask;
-using Application.Tasks.Commands.UpdateTask;
+﻿using AutoFixture;
 using FluentAssertions;
-using IntegrationTests.Database;
+using Infrastructure.Data;
+using IntegrationTests.Common;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace IntegrationTests.Tasks.Commands
 {
-    public class DeleteTaskTest : BaseTest
+    [Collection("Database collection")]
+    public class DeleteTaskTest
     {
-        public DeleteTaskTest(DatabaseFixture fixture) : base(fixture)
+        private readonly WebApplicationFactoryFixture _fixture;
+        private readonly Fixture _autoFixture;
+
+        public DeleteTaskTest(WebApplicationFactoryFixture fixture)
         {
+            _fixture = fixture;
+            _autoFixture = new Fixture();
         }
 
         [Fact]
         public async Task DeleteTask_ShouldReturn204()
         {
-            // Arrange
-            int id = 2;
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                // Arrange
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var task = _autoFixture.Create<Domain.Entities.Task>();
+                task.Id = 0;
+                context.Tasks.Add(task);
+                context.SaveChanges();
 
-            // Act
-            var response = await _client.DeleteAsync("api/tasks/" + id);
+                int count = context.Tasks.Count();
 
-            // Assert
-            ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
+                // Act
+                var response = await _fixture.Client.DeleteAsync("api/tasks/" + task.Id);
+                context.Entry(task).State = EntityState.Detached;
+
+                // Assert
+                ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
+                context.Tasks.Count().Should().Be(count - 1);
+                context.Tasks.Find(task.Id).Should().BeNull();
+            }
         }
 
         [Fact]
         public async Task DeleteTask_ShouldReturn404_WhenBadParameters()
         {
-            // Arrange
-            int id = 1;
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                // Arrange
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var task = _autoFixture.Create<Domain.Entities.Task>();
+                task.Id = 0;
+                context.Tasks.Add(task);
+                context.SaveChanges();
 
-            // Act
-            var response = await _client.DeleteAsync("api/tasks/" + id);
+                int count = context.Tasks.Count();
+                int badId = task.Id + 100;
 
-            // Assert
-            ((int)response.StatusCode).Should().Be(StatusCodes.Status404NotFound);
+                // Act
+                var response = await _fixture.Client.DeleteAsync("api/tasks/" + badId);
+
+                // Assert
+                ((int)response.StatusCode).Should().Be(StatusCodes.Status404NotFound);
+                context.Tasks.Count().Should().Be(count);
+                context.Tasks.Find(task.Id).Should().NotBeNull();
+            }
         }
     }
 }
