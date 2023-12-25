@@ -47,7 +47,6 @@ namespace IntegrationTests.Common
                 var context = scopedServices.GetRequiredService<ApplicationDbContext>();
 
                 await context.Database.EnsureDeletedAsync();
-                // await context.Tasks.ExecuteDeleteAsync();
             }
         }
 

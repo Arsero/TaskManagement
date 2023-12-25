@@ -29,7 +29,6 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var command = _autoFixture.Create<CreateTaskCommand>();
-                command.Id = 0;
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 int count = context.Tasks.Count();
 

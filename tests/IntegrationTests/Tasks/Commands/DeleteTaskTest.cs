@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Infrastructure.Data;
 using IntegrationTests.Common;
+using IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,16 +29,11 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var task = _autoFixture.Create<Domain.Entities.Task>();
-                task.Id = 0;
-                context.Tasks.Add(task);
-                context.SaveChanges();
-
+                var task = ContextHelper.SeedTask(context);
                 int count = context.Tasks.Count();
 
                 // Act
                 var response = await _fixture.Client.DeleteAsync("api/tasks/" + task.Id);
-                context.Entry(task).State = EntityState.Detached;
 
                 // Assert
                 ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
@@ -53,13 +49,10 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var task = _autoFixture.Create<Domain.Entities.Task>();
-                task.Id = 0;
-                context.Tasks.Add(task);
-                context.SaveChanges();
+                var task = ContextHelper.SeedTask(context);
 
                 int count = context.Tasks.Count();
-                int badId = task.Id + 100;
+                int badId = task.Id + 1;
 
                 // Act
                 var response = await _fixture.Client.DeleteAsync("api/tasks/" + badId);

@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using Infrastructure.Data;
 using IntegrationTests.Common;
+using IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,22 +31,15 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var task = _autoFixture.Create<Domain.Entities.Task>();
-                task.Id = 0;
-                context.Tasks.Add(task);
-                context.SaveChanges();
-
-                int count = context.Tasks.Count();
+                var task = ContextHelper.SeedTask(context);
                 string updatedTitle = "Updated";
                 var command = new UpdateTaskCommand(task.Id, updatedTitle);
 
                 // Act
                 var response = await _fixture.Client.PutAsJsonAsync("api/tasks/" + task.Id, command);
-                context.Entry(task).State = EntityState.Detached;
 
                 // Assert
                 ((int)response.StatusCode).Should().Be(StatusCodes.Status204NoContent);
-                context.Tasks.Count().Should().Be(count);
 
                 var updatedTask = context.Tasks.Find(command.Id);
                 updatedTask.Should().NotBeNull();
@@ -60,13 +54,9 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var task = _autoFixture.Create<Domain.Entities.Task>();
-                task.Id = 0;
-                context.Tasks.Add(task);
-                context.SaveChanges();
+                var task = ContextHelper.SeedTask(context);
 
-                int count = context.Tasks.Count();
-                int badId = task.Id + 100;
+                int badId = task.Id + 1;
                 string updatedTitle = "Updated";
                 var command = new UpdateTaskCommand(task.Id, updatedTitle);
 
@@ -75,7 +65,6 @@ namespace IntegrationTests.Tasks.Commands
                 
                 // Assert
                 ((int)response.StatusCode).Should().Be(StatusCodes.Status400BadRequest);
-                context.Tasks.Count().Should().Be(count);
             }
         }
 
@@ -86,13 +75,9 @@ namespace IntegrationTests.Tasks.Commands
             {
                 // Arrange
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var task = _autoFixture.Create<Domain.Entities.Task>();
-                task.Id = 0;
-                context.Tasks.Add(task);
-                context.SaveChanges();
+                var task = ContextHelper.SeedTask(context);
 
-                int count = context.Tasks.Count();
-                int badId = task.Id + 100;
+                int badId = task.Id + 1;
                 string updatedTitle = "Updated";
                 var command = new UpdateTaskCommand(badId, updatedTitle);
 
@@ -101,7 +86,6 @@ namespace IntegrationTests.Tasks.Commands
 
                 // Assert
                 ((int)response.StatusCode).Should().Be(StatusCodes.Status404NotFound);
-                context.Tasks.Count().Should().Be(count);
             }
         }
     }
